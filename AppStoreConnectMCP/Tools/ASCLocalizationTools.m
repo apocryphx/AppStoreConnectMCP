@@ -49,12 +49,14 @@
         return nil;
     }
 
-    NSMutableDictionary *params = [@{@"filter[app]": appId} mutableCopy];
-    if (args[@"limit"])    params[@"limit"]                    = args[@"limit"];
-    if (args[@"platform"]) params[@"filter[platform]"]         = args[@"platform"];
-    if (args[@"state"])    params[@"filter[appStoreState]"]    = args[@"state"];
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    if (args[@"limit"])    params[@"limit"]                 = args[@"limit"];
+    if (args[@"platform"]) params[@"filter[platform]"]      = args[@"platform"];
+    if (args[@"state"])    params[@"filter[appStoreState]"] = args[@"state"];
 
-    NSDictionary *resp = [[ASCClient shared] GET:@"/appStoreVersions" params:params error:error];
+    // Use the relationship endpoint — GET /appStoreVersions (collection) returns 403.
+    NSString *path = [NSString stringWithFormat:@"/apps/%@/appStoreVersions", appId];
+    NSDictionary *resp = [[ASCClient shared] GET:path params:params error:error];
     if (!resp) return nil;
 
     NSArray *data = resp[@"data"];
@@ -80,10 +82,12 @@
         return nil;
     }
 
-    NSMutableDictionary *params = [@{@"filter[appStoreVersion]": versionId} mutableCopy];
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
     if (args[@"limit"]) params[@"limit"] = args[@"limit"];
 
-    NSDictionary *resp = [[ASCClient shared] GET:@"/appStoreVersionLocalizations" params:params error:error];
+    // Use the relationship endpoint — GET /appStoreVersionLocalizations (collection) may return 403.
+    NSString *path = [NSString stringWithFormat:@"/appStoreVersions/%@/appStoreVersionLocalizations", versionId];
+    NSDictionary *resp = [[ASCClient shared] GET:path params:params error:error];
     if (!resp) return nil;
 
     NSArray *data = resp[@"data"];
