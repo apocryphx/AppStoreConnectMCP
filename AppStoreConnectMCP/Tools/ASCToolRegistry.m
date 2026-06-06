@@ -13,6 +13,7 @@
 #import "ASCUserTools.h"
 #import "ASCReportsTools.h"
 #import "ASCXcodeTools.h"
+#import "ASCKeywordTools.h"
 
 @implementation ASCToolRegistry
 
@@ -93,6 +94,11 @@
 
     // Xcode (local)
     if ([name isEqualToString:@"list_schemes"]) return [ASCXcodeTools listSchemes:arguments error:error];
+
+    // Keywords (iTunes Search API — no auth required)
+    if ([name isEqualToString:@"check_keyword_rankings"])    return [ASCKeywordTools checkKeywordRankings:arguments error:error];
+    if ([name isEqualToString:@"search_keyword_competition"])return [ASCKeywordTools searchKeywordCompetition:arguments error:error];
+    if ([name isEqualToString:@"bulk_keyword_scan"])         return [ASCKeywordTools bulkKeywordScan:arguments error:error];
 
     if (error) *error = [NSError errorWithDomain:@"ASCToolRegistry" code:404
                                        userInfo:@{NSLocalizedDescriptionKey:
@@ -525,6 +531,49 @@
                     @"project_path": strProp(@"Absolute path to .xcodeproj or .xcworkspace file")
                 },
                 @"required": @[@"project_path"]
+            }
+        },
+
+        // ── Keywords (iTunes Search API) ──────────────────────────────────
+        @{
+            @"name": @"check_keyword_rankings",
+            @"description": @"Check where a specific app ranks in App Store search results for a list of keywords. Uses the public iTunes Search API — no Search Ads account needed. Returns the rank position (1–200) for each keyword, or 'not in top N' if not found.",
+            @"inputSchema": @{
+                @"type": @"object",
+                @"properties": @{
+                    @"keywords":   strProp(@"Comma-separated list of keyword phrases to check, e.g. 'sketch app, drawing tool, procreate alternative'"),
+                    @"bundle_id":  strProp(@"Bundle ID of the app to track, e.g. com.koljaw.Sketchography"),
+                    @"country":    strProp(@"Two-letter country code for the App Store to search (default: us)"),
+                    @"limit":      intProp(@"How many results to scan per keyword (default: 100, max: 200)", 1, 200)
+                },
+                @"required": @[@"keywords", @"bundle_id"]
+            }
+        },
+        @{
+            @"name": @"search_keyword_competition",
+            @"description": @"Show the top apps that appear for a given keyword in App Store search. Useful for assessing keyword competition — who you'd need to outrank.",
+            @"inputSchema": @{
+                @"type": @"object",
+                @"properties": @{
+                    @"keyword":  strProp(@"The keyword phrase to search"),
+                    @"country":  strProp(@"Two-letter country code (default: us)"),
+                    @"limit":    intProp(@"Number of top results to return (default: 10, max: 50)", 1, 50)
+                },
+                @"required": @[@"keyword"]
+            }
+        },
+        @{
+            @"name": @"bulk_keyword_scan",
+            @"description": @"Scan a list of keywords across the App Store in one call. For each keyword shows your app's rank and the top competing apps. Great for building or auditing an ASO keyword strategy.",
+            @"inputSchema": @{
+                @"type": @"object",
+                @"properties": @{
+                    @"keywords":   strProp(@"Comma-separated keyword phrases to scan"),
+                    @"bundle_id":  strProp(@"Optional: your app's bundle ID to show your rank alongside competitors"),
+                    @"country":    strProp(@"Two-letter country code (default: us)"),
+                    @"limit":      intProp(@"Results to scan per keyword (default: 100, max: 200)", 1, 200)
+                },
+                @"required": @[@"keywords"]
             }
         },
     ];
