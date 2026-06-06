@@ -123,7 +123,15 @@
                                                  error:&saveError];
     if (!ok) { if (error) *error = saveError; return nil; }
 
-    return @"✓ Credentials saved to Keychain. Ask me to list your apps to verify the connection.";
+    // Delete the .p8 file from disk now that it's safely stored in Keychain.
+    NSError *removeError = nil;
+    BOOL deleted = [[NSFileManager defaultManager] removeItemAtPath:p8Path error:&removeError];
+    NSString *deletedNote = deleted
+        ? [NSString stringWithFormat:@"\n🗑 Deleted %@ from disk — the key is now stored only in your Keychain.", p8Path]
+        : [NSString stringWithFormat:@"\n⚠️ Could not delete %@ from disk (%@). Please remove it manually.",
+           p8Path, removeError.localizedDescription ?: @"unknown error"];
+
+    return [@"✓ Credentials saved to Keychain." stringByAppendingString:deletedNote];
 }
 
 #pragma mark - Setup tool schema
@@ -131,7 +139,7 @@
 - (NSDictionary *)_setupTool {
     return @{
         @"name": @"configure_app_store_connect",
-        @"description": @"Set up App Store Connect API credentials. Required before using any other tools.\n\nHow to get credentials:\n1. Go to App Store Connect → Users and Access → Integrations → App Store Connect API\n2. Generate an API Key (Team key or Individual key)\n3. Download the .p8 file (you can only download it once)\n4. Note the Key ID and Issuer ID shown on the page",
+        @"description": @"Set up App Store Connect API credentials. Required before using any other tools.\n\nHow to get credentials:\n1. Go to App Store Connect → Users and Access → Integrations → App Store Connect API\n2. Generate an API Key (Team key or Individual key)\n3. Download the .p8 file (you can only download it once)\n4. Note the Key ID and Issuer ID shown on the page\n\nAfter saving, the .p8 file is automatically deleted from disk — the private key is stored only in your macOS Keychain.",
         @"inputSchema": @{
             @"type": @"object",
             @"properties": @{
@@ -145,7 +153,7 @@
                 },
                 @"p8_path": @{
                     @"type": @"string",
-                    @"description": @"Absolute path to the downloaded .p8 private key file (e.g. /Users/you/Downloads/AuthKey_ABC1234567.p8)"
+                    @"description": @"Absolute path to the downloaded .p8 private key file (e.g. /Users/you/Downloads/AuthKey_ABC1234567.p8). The file will be deleted from disk automatically after its contents are stored in the Keychain."
                 },
                 @"vendor_number": @{
                     @"type": @"string",
