@@ -1,0 +1,25 @@
+{
+  "manifest_version": "0.3",
+  "name": "astro-bridge",
+  "display_name": "Astro",
+  "version": "1.0.0",
+  "description": "Native macOS stdio bridge to the Astro MCP server for App Store Optimization. Forwards Claude Desktop's MCP calls to the locally-running Astro app: track keyword rankings, ratings, and competitors; search the App Store; manage tracked apps, keywords, and tags. Requires the Astro app to be running locally.",
+  "author": {
+    "name": "Kolja Wawrowsky"
+  },
+  "icon": "icon.png",
+  "server": {
+    "type": "binary",
+    "entry_point": "server/Astro_Bridge.app/Contents/MacOS/Astro_Bridge",
+    "mcp_config": {
+      "command": "${__dirname}/server/Astro_Bridge.app/Contents/MacOS/Astro_Bridge",
+      "args": []
+    }
+  },
+  "tools_generated": true,
+  "keywords": ["aso", "app store", "keywords", "rankings"],
+  "license": "MIT",
+  "compatibility": {
+    "platforms": ["darwin"]
+  }
+}

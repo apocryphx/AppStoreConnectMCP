@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Xcode
+build/
+DerivedData/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+
+# Bundle binary / .app (rebuilt from source)
+bundle/server/
+
+# Bundle icon (copied from project-root icon.png by the Package MCPB build phase)
+bundle/icon.png

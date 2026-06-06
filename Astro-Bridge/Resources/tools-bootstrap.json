@@ -1,0 +1,424 @@
+[
+  {
+    "name": "list_apps",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "description": "List all tracked applications with keyword counts and stores"
+  },
+  {
+    "name": "get_app_keywords",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "appId": {
+          "type": "string",
+          "description": "App bundle ID (exact match)"
+        },
+        "appName": {
+          "type": "string",
+          "description": "App name (partial match)"
+        },
+        "store": {
+          "type": "string",
+          "description": "Filter by store"
+        }
+      }
+    },
+    "description": "Get all keywords tracked for a specific app"
+  },
+  {
+    "name": "search_rankings",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "includeStatistics": {
+          "type": "boolean",
+          "description": "When true, includes statistical analysis: average, min, max ranking, volatility and trend direction (improving/stable/declining). Requires includeHistory"
+        },
+        "period": {
+          "enum": [
+            "week",
+            "month",
+            "year",
+            "all"
+          ],
+          "type": "string",
+          "description": "Time period: week (7d), month (30d), year (365d), all. Only used when includeHistory is true. Overrides daysBack if provided"
+        },
+        "appName": {
+          "type": "string",
+          "description": "Filter by app name (case-insensitive partial match)"
+        },
+        "includeHistory": {
+          "type": "boolean",
+          "description": "When true, includes historical ranking data points over time"
+        },
+        "keyword": {
+          "type": "string",
+          "description": "Keyword to search for (case-insensitive partial match)"
+        },
+        "appId": {
+          "type": "string",
+          "description": "Filter by app bundle ID (case-insensitive exact match)"
+        },
+        "daysBack": {
+          "type": "integer",
+          "description": "Number of days of history (default: 30). Only used when includeHistory is true. Ignored if 'period' is provided"
+        },
+        "store": {
+          "type": "string",
+          "description": "Filter by app store (e.g., 'us', 'uk', 'it')"
+        }
+      },
+      "required": [
+        "keyword",
+        "store"
+      ]
+    },
+    "description": "Search keyword rankings for apps. Returns current ranking, difficulty, popularity and metadata. Optionally includes historical ranking data and statistical analysis."
+  },
+  {
+    "name": "get_app_ratings",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "appId": {
+          "type": "string",
+          "description": "App bundle ID"
+        },
+        "store": {
+          "type": "string",
+          "description": "Filter by store"
+        },
+        "appName": {
+          "type": "string",
+          "description": "App name"
+        },
+        "includeHistory": {
+          "type": "boolean",
+          "description": "When true, includes the full historical rating data points over time (default: false)"
+        }
+      }
+    },
+    "description": "Get app ratings by store/country. Returns current average rating and review count. Set includeHistory to true to get the full rating history."
+  },
+  {
+    "name": "extract_competitors_keywords",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "keyword": {
+          "type": "string",
+          "description": "Keyword text (must be already tracked)"
+        },
+        "store": {
+          "type": "string",
+          "description": "Store country code (e.g., 'us', 'it')"
+        }
+      },
+      "required": [
+        "keyword",
+        "store"
+      ]
+    },
+    "description": "Extract keyword ideas from competitor apps ranking for a tracked keyword. Generates word combinations, fetches their popularity, and returns all keywords with popularity > 5 sorted by score."
+  },
+  {
+    "name": "add_app",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "appStoreId": {
+          "type": "string",
+          "description": "Numeric App Store ID (e.g., '389801252'). Required unless 'temporary' is true."
+        },
+        "name": {
+          "type": "string",
+          "description": "Custom name for the temporary app. Only used when 'temporary' is true. If omitted, defaults to 'Temporary App N'."
+        },
+        "temporary": {
+          "type": "boolean",
+          "description": "If true, creates a temporary app placeholder instead of fetching from the App Store. Useful for apps not yet published. (default: false)"
+        },
+        "platform": {
+          "enum": [
+            "iphone",
+            "ipad",
+            "mac",
+            "appletv",
+            "realityDevice"
+          ],
+          "type": "string",
+          "description": "Platform (default: iphone)"
+        }
+      },
+      "required": []
+    },
+    "description": "Add an app to tracking by its App Store numeric ID, or create a temporary app placeholder for apps not yet on the store. Use search_app_store to find the ID first. Temporary apps allow you to start tracking keywords before your app is published."
+  },
+  {
+    "name": "add_keywords",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "appId": {
+          "type": "string",
+          "description": "App Store ID (exact match)"
+        },
+        "store": {
+          "type": "string",
+          "description": "Country code (e.g., 'us', 'it', 'uk')"
+        },
+        "appName": {
+          "type": "string",
+          "description": "App name (partial match)"
+        },
+        "keywords": {
+          "items": {
+            "type": "string"
+          },
+          "description": "List of keywords to add (max 100)",
+          "maxItems": 100,
+          "type": "array"
+        },
+        "platform": {
+          "enum": [
+            "iphone",
+            "ipad",
+            "mac",
+            "appletv",
+            "realityDevice"
+          ],
+          "type": "string",
+          "description": "Platform (default: iphone)"
+        }
+      },
+      "required": [
+        "keywords",
+        "store"
+      ]
+    },
+    "description": "Add one or more keywords (up to 100) to track for a specific app. Fetches ranking, popularity, and difficulty from the App Store in batch."
+  },
+  {
+    "name": "remove_keywords",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "appId": {
+          "type": "string",
+          "description": "App Store ID (exact match)"
+        },
+        "store": {
+          "type": "string",
+          "description": "Country code (e.g., 'us', 'it'). Required if the keyword exists in multiple stores; otherwise optional and applied as a filter."
+        },
+        "appName": {
+          "type": "string",
+          "description": "App name (partial match)"
+        },
+        "keywords": {
+          "items": {
+            "type": "string"
+          },
+          "description": "List of keywords to remove (max 100). Either 'keywords' or 'keyword' must be provided.",
+          "maxItems": 100,
+          "type": "array"
+        },
+        "keyword": {
+          "type": "string",
+          "description": "Single keyword to remove. Alternative to 'keywords'."
+        }
+      },
+      "required": []
+    },
+    "description": "Remove one or more tracked keywords from an app. IMPORTANT: this is a destructive operation — before calling this tool, the assistant MUST list the keywords that will be deleted and ask the user for explicit confirmation. Do not proceed without it. Pass a single keyword or an array (up to 100). All deletions for the request are committed in one transaction; missing keywords are reported per-item."
+  },
+  {
+    "name": "set_keyword_note",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "appId": {
+          "type": "string",
+          "description": "App Store ID (exact match)"
+        },
+        "store": {
+          "type": "string",
+          "description": "Store code to narrow down if keyword exists in multiple stores"
+        },
+        "appName": {
+          "type": "string",
+          "description": "App name (partial match)"
+        },
+        "note": {
+          "type": "string",
+          "description": "Note text. Omit or pass empty string to delete the existing note."
+        },
+        "keyword": {
+          "type": "string",
+          "description": "Keyword text (exact match)"
+        }
+      },
+      "required": [
+        "keyword"
+      ]
+    },
+    "description": "Set, update, or delete a note on a tracked keyword. Pass 'note' to add/update; omit it or pass an empty string to delete the existing note."
+  },
+  {
+    "name": "set_keyword_tag",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "appId": {
+          "type": "string",
+          "description": "App Store ID (exact match)"
+        },
+        "keyword": {
+          "type": "string",
+          "description": "Keyword text (exact match)"
+        },
+        "appName": {
+          "type": "string",
+          "description": "App name (partial match)"
+        },
+        "store": {
+          "type": "string",
+          "description": "Store code to narrow down if keyword exists in multiple stores"
+        },
+        "tag": {
+          "type": "string",
+          "description": "Tag name (exact match, must already exist in Astro)"
+        },
+        "action": {
+          "enum": [
+            "add",
+            "remove"
+          ],
+          "type": "string",
+          "description": "'add' to assign the tag, 'remove' to unassign it"
+        }
+      },
+      "required": [
+        "keyword",
+        "tag",
+        "action"
+      ]
+    },
+    "description": "Add or remove a tag from a tracked keyword. The tag must already exist. Returns an error if adding a tag already present, or removing a tag not assigned."
+  },
+  {
+    "name": "manage_tag",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "color": {
+          "enum": [
+            "red",
+            "orange",
+            "yellow",
+            "green",
+            "blue",
+            "purple",
+            "gray"
+          ],
+          "type": "string",
+          "description": "Tag color. Required for 'create', optional for 'update'."
+        },
+        "name": {
+          "type": "string",
+          "description": "Tag name. Required for 'create' and 'update'. Not needed for 'list'."
+        },
+        "newName": {
+          "type": "string",
+          "description": "(update only) New name to rename the tag"
+        },
+        "action": {
+          "enum": [
+            "list",
+            "create",
+            "update"
+          ],
+          "type": "string",
+          "description": "'list' to get all tags, 'create' to create a new tag, 'update' to modify an existing one"
+        }
+      },
+      "required": [
+        "action"
+      ]
+    },
+    "description": "List, create, or update tags. Actions: 'list' returns all tags; 'create' adds a new tag (requires name + color); 'update' modifies an existing tag (requires name, optionally newName and/or color). Available colors: red, orange, yellow, green, blue, purple, gray."
+  },
+  {
+    "name": "search_app_store",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "appId": {
+          "type": "string",
+          "description": "Your app's App Store ID. If provided, includes your app's ranking position for this keyword"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Max results to return (default: 50, max: 100)"
+        },
+        "platform": {
+          "enum": [
+            "iphone",
+            "ipad",
+            "mac",
+            "appletv",
+            "realityDevice"
+          ],
+          "type": "string",
+          "description": "Platform (default: iphone)"
+        },
+        "store": {
+          "type": "string",
+          "description": "Country code (e.g., 'us', 'it', 'uk')"
+        },
+        "keyword": {
+          "type": "string",
+          "description": "Search term (keyword or app name)"
+        }
+      },
+      "required": [
+        "keyword",
+        "store"
+      ]
+    },
+    "description": "Search the App Store for a keyword. Returns ranked apps with their details. Also useful to extract competitor apps for a keyword. Optionally pass your appId to see your ranking position."
+  },
+  {
+    "name": "get_keyword_suggestions",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "appId": {
+          "type": "string",
+          "description": "App Store ID (exact match)"
+        },
+        "store": {
+          "type": "string",
+          "description": "Country code (e.g., 'us', 'it', 'uk')"
+        },
+        "appName": {
+          "type": "string",
+          "description": "App name (partial match)"
+        },
+        "highPopularity": {
+          "type": "boolean",
+          "description": "Filter for high popularity suggestions (default: true)"
+        }
+      },
+      "required": [
+        "store"
+      ]
+    },
+    "description": "Get AI-powered keyword suggestions for an app. Returns suggested keywords with popularity, difficulty, and app count."
+  }
+]
