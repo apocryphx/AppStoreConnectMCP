@@ -174,6 +174,14 @@
     const uint8_t *dBytes = b + p;
     p += 32;
 
+    // Skip optional [0] ECParameters (Apple's .p8 includes it; RFC 5915 makes it optional)
+    if (p < n && b[p] == 0xA0) {
+        p++;
+        NSUInteger ctxLen; DER_LEN(ctxLen);
+        if (p + ctxLen > n) goto bad;
+        p += ctxLen;
+    }
+
     // [1] context-specific tag containing the public key BIT STRING
     if (p >= n || b[p++] != 0xA1) goto bad;
     { NSUInteger _skip; DER_LEN(_skip); (void)_skip; }
