@@ -117,20 +117,109 @@
     return der;
 }
 
+/// Unwrap a PKCS#8 DER-encoded EC private key into X9.63 format (97 bytes).
+///
+/// Apple's .p8 is PKCS#8: SEQUENCE { INTEGER(0), AlgorithmIdentifier, OCTET_STRING { SEC1 } }
+/// SecKeyCreateWithData expects X9.63: 04 ‖ Qx(32) ‖ Qy(32) ‖ d(32)
+///
+/// We parse the outer PKCS#8, extract the SEC1 ECPrivateKey from the OCTET STRING,
+/// then pull out d and Q and assemble the 97-byte X9.63 form.
+- (nullable NSData *)_x963KeyFromPKCS8:(NSData *)pkcs8 error:(NSError **)error {
+    const uint8_t *b = pkcs8.bytes;
+    NSUInteger     n = pkcs8.length;
+    NSUInteger     p = 0;
+
+    // Reads a DER length at b[p], advances p past it, returns the value.
+    // Returns NSUIntegerMax on any parse error.
+#define DER_LEN(dst) do { \
+    if (p >= n) goto bad; \
+    if (!(b[p] & 0x80)) { dst = b[p++]; } \
+    else { \
+        NSUInteger _nb = b[p++] & 0x7F; \
+        if (!_nb || _nb > 4 || p + _nb > n) goto bad; \
+        dst = 0; \
+        for (NSUInteger _i = 0; _i < _nb; _i++) dst = (dst << 8) | b[p++]; \
+    } \
+} while(0)
+
+    // ── Outer PKCS#8 SEQUENCE ──────────────────────────────────────────────
+    if (p >= n || b[p++] != 0x30) goto bad;
+    { NSUInteger _skip; DER_LEN(_skip); (void)_skip; }      // outer length (don't need it)
+
+    // version INTEGER 0
+    if (p + 3 > n || b[p] != 0x02 || b[p+1] != 0x01 || b[p+2] != 0x00) goto bad;
+    p += 3;
+
+    // AlgorithmIdentifier SEQUENCE — skip whole thing
+    if (p >= n || b[p++] != 0x30) goto bad;
+    { NSUInteger algLen; DER_LEN(algLen); if (p + algLen > n) goto bad; p += algLen; }
+
+    // privateKey OCTET STRING — advance past tag+length; p now = start of SEC1
+    if (p >= n || b[p++] != 0x04) goto bad;
+    { NSUInteger _skip; DER_LEN(_skip); (void)_skip; }
+
+    // ── SEC1 ECPrivateKey ──────────────────────────────────────────────────
+    // SEQUENCE { INTEGER(1), OCTET_STRING(d,32), [1] { BIT_STRING(04‖Qx‖Qy,65) } }
+
+    if (p >= n || b[p++] != 0x30) goto bad;
+    { NSUInteger _skip; DER_LEN(_skip); (void)_skip; }      // SEC1 outer length
+
+    // version INTEGER 1
+    if (p + 3 > n || b[p] != 0x02 || b[p+1] != 0x01 || b[p+2] != 0x01) goto bad;
+    p += 3;
+
+    // d: OCTET STRING (32 bytes)
+    if (p >= n || b[p++] != 0x04) goto bad;
+    { NSUInteger dLen; DER_LEN(dLen); if (dLen != 32 || p + 32 > n) goto bad; }
+    const uint8_t *dBytes = b + p;
+    p += 32;
+
+    // [1] context-specific tag containing the public key BIT STRING
+    if (p >= n || b[p++] != 0xA1) goto bad;
+    { NSUInteger _skip; DER_LEN(_skip); (void)_skip; }
+
+    // BIT STRING  (tag 0x03, length 66, unused-bits 0x00, then 04‖Qx‖Qy)
+    if (p >= n || b[p++] != 0x03) goto bad;
+    { NSUInteger bsLen; DER_LEN(bsLen); if (bsLen != 66 || p + 66 > n) goto bad; }
+    if (b[p++] != 0x00) goto bad;                           // unused-bits byte
+    if (b[p] != 0x04) goto bad;                             // uncompressed-point marker
+    const uint8_t *qBytes = b + p;                          // 65 bytes: 04‖Qx‖Qy
+
+    {
+        // Assemble X9.63: 04 ‖ Qx ‖ Qy ‖ d  (97 bytes)
+        uint8_t x963[97];
+        memcpy(x963,      qBytes, 65);
+        memcpy(x963 + 65, dBytes, 32);
+        return [NSData dataWithBytes:x963 length:97];
+    }
+
+#undef DER_LEN
+
+bad:
+    if (error) *error = [NSError errorWithDomain:@"ASCJWTSigner" code:2
+                                       userInfo:@{NSLocalizedDescriptionKey:
+                                                  @"Failed to parse PKCS#8 key — unexpected ASN.1 structure"}];
+    return nil;
+}
+
 /// Create a SecKeyRef from DER-encoded PKCS#8 private key data.
 - (nullable SecKeyRef)_privateKeyFromDER:(NSData *)der error:(NSError **)error {
+    // SecKeyCreateWithData requires X9.63 (04‖Qx‖Qy‖d, 97 bytes), not PKCS#8.
+    NSData *x963 = [self _x963KeyFromPKCS8:der error:error];
+    if (!x963) return NULL;
+
     NSDictionary *attrs = @{
         (__bridge id)kSecAttrKeyType:  (__bridge id)kSecAttrKeyTypeEC,
         (__bridge id)kSecAttrKeyClass: (__bridge id)kSecAttrKeyClassPrivate,
     };
     CFErrorRef cfError = NULL;
-    SecKeyRef key = SecKeyCreateWithData((__bridge CFDataRef)der,
+    SecKeyRef key = SecKeyCreateWithData((__bridge CFDataRef)x963,
                                          (__bridge CFDictionaryRef)attrs,
                                          &cfError);
     if (!key) {
         if (error && cfError) *error = (__bridge_transfer NSError *)cfError;
         else if (error) *error = [NSError errorWithDomain:@"ASCJWTSigner" code:3
-                                                userInfo:@{NSLocalizedDescriptionKey: @"Invalid .p8 key data"}];
+                                                userInfo:@{NSLocalizedDescriptionKey: @"EC private key creation from X9.63 data failed"}];
         return NULL;
     }
     return key;
