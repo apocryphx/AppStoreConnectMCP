@@ -21,6 +21,5 @@ AppStoreConnect-Bridge.mcpb
 # Build artifacts / profiling
 default.profraw
 
-# Personal dev context — not for public repo
-CLAUDE.md
+# Packed bundle artifact (duplicate of AppStoreConnect-Bridge.mcpb)
 bundle/bundle.mcpb
