@@ -29,9 +29,8 @@ The bridge does no storage of its own beyond a tool-schema cache. All ASO data l
 ### Option 1: Download the `.mcpb` bundle
 
 1. Download [`Astro-Bridge.mcpb`](https://github.com/apocryphx/Astro-Bridge/releases/latest/download/Astro-Bridge.mcpb)
-2. Open Claude Desktop → Settings
-3. Drag the `.mcpb` onto **Drag .MCPB or .DXT files here to install**
-4. Make sure the Astro app is running
+2. Double-click the file — Claude Desktop opens and installs it automatically
+3. Make sure the Astro app is running
 
 ### Option 2: Build from source
 
