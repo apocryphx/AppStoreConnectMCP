@@ -24,7 +24,7 @@ Your API credentials (Key ID, Issuer ID, and `.p8` private key data) are stored 
 - **Never logged** to disk or stderr beyond a non-sensitive startup confirmation
 - **Never shared** with any third party
 
-The `.p8` private key is used locally to sign JWTs. The signed token (not the key itself) is included in the `Authorization` header of each API request to Apple.
+The `.p8` file is automatically deleted from disk after its contents are stored in the Keychain. From that point on, the private key exists only in the Keychain. It is used locally to sign JWTs; the signed token (not the key itself) is included in the `Authorization` header of each API request to Apple.
 
 ## Data Collection
 

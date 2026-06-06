@@ -48,7 +48,7 @@ Claude will use the `configure_app_store_connect` tool and walk you through prov
 - **Path to your `.p8` file** — downloaded when you created the key (e.g. `~/Downloads/AuthKey_XXXXXXXXXX.p8`)
 - **Vendor Number** *(optional)* — required for sales and finance reports
 
-Credentials are stored securely in your macOS Keychain under `com.apocryphx.appstoreconnect-bridge`. The `.p8` private key never leaves your machine.
+Credentials are stored securely in your macOS Keychain under `com.apocryphx.appstoreconnect-bridge`. **The `.p8` file is automatically deleted from disk** after its contents are stored in the Keychain — the private key then lives only in the Keychain, never on disk.
 
 After setup, Claude immediately has access to all 35 tools. You only configure once.
 
