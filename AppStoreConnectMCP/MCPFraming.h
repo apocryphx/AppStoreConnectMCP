@@ -1,6 +1,6 @@
 //
 //  MCPFraming.h
-//  Astro-Bridge
+//  AppStoreConnectMCP
 //
 //  JSON-RPC 2.0 framing helpers. Extracted from main.m so the same encoding
 //  primitives are reachable from any module that produces a wire message

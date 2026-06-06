@@ -1,6 +1,6 @@
 //
 //  MCPFraming.m
-//  Astro-Bridge
+//  AppStoreConnectMCP
 //
 
 #import "MCPFraming.h"

@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "15B0787C2F91D67F00C19CBA"
-               BuildableName = "Astro_Bridge.app"
-               BlueprintName = "Astro-Bridge"
-               ReferencedContainer = "container:Astro-Bridge.xcodeproj">
+               BuildableName = "AppStoreConnect_Bridge.app"
+               BlueprintName = "AppStoreConnectMCP"
+               ReferencedContainer = "container:AppStoreConnectMCP.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

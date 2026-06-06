@@ -1,13 +1,12 @@
 //
 //  main.m
-//  Astro-Bridge
+//  AppStoreConnectMCP
 //
-//  Stdio↔HTTP bridge for the Astro MCP server.
+//  Stdio↔HTTPS bridge between Claude Desktop and the App Store Connect API.
 //
 //  Claude Desktop launches this app (packaged inside an .mcpb bundle) as a
-//  subprocess. It reads JSON-RPC messages from stdin, forwards each to the
-//  Astro app's locally-running HTTP server, and writes the response
-//  back to stdout.
+//  subprocess. It reads JSON-RPC from stdin, implements MCP tools natively,
+//  and writes responses back to stdout.
 //
 //  The app runs as an NSApplication accessory (LSUIElement=true) so a
 //  future preferences window or status bar item can attach without
@@ -28,7 +27,7 @@ int main(int argc, const char *argv[]) {
     setvbuf(stdout, NULL, _IONBF, 0);   // JSON-RPC channel — never buffer (§10.1)
     setvbuf(stderr, NULL, _IONBF, 0);   // diagnostics — never buffer
     signal(SIGPIPE, SIG_IGN);
-    fprintf(stderr, "[astro-bridge] main() pid=%d\n", getpid());
+    fprintf(stderr, "[asc-bridge] main() pid=%d\n", getpid());
 
     @autoreleasepool {
         NSApplication *app = [NSApplication sharedApplication];

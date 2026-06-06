@@ -18,26 +18,26 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		15B0787D2F91D67F00C19CBA /* Astro_Bridge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Astro_Bridge.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		15B0787D2F91D67F00C19CBA /* AppStoreConnect_Bridge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AppStoreConnect_Bridge.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		15B0789C2F91D80000C19CBA /* Exceptions for "Astro-Bridge" folder in "Astro-Bridge" target */ = {
+		15B0789C2F91D80000C19CBA /* Exceptions for "AppStoreConnectMCP" folder in "AppStoreConnectMCP" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 15B0787C2F91D67F00C19CBA /* Astro-Bridge */;
+			target = 15B0787C2F91D67F00C19CBA /* AppStoreConnectMCP */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		15B0787F2F91D67F00C19CBA /* Astro-Bridge */ = {
+		15B0787F2F91D67F00C19CBA /* AppStoreConnectMCP */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				15B0789C2F91D80000C19CBA /* Exceptions for "Astro-Bridge" folder in "Astro-Bridge" target */,
+				15B0789C2F91D80000C19CBA /* Exceptions for "AppStoreConnectMCP" folder in "AppStoreConnectMCP" target */,
 			);
-			path = "Astro-Bridge";
+			path = AppStoreConnectMCP;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -54,7 +54,7 @@
 		15B078742F91D67F00C19CBA = {
 			isa = PBXGroup;
 			children = (
-				15B0787F2F91D67F00C19CBA /* Astro-Bridge */,
+				15B0787F2F91D67F00C19CBA /* AppStoreConnectMCP */,
 				15B0787E2F91D67F00C19CBA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -62,7 +62,7 @@
 		15B0787E2F91D67F00C19CBA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				15B0787D2F91D67F00C19CBA /* Astro_Bridge.app */,
+				15B0787D2F91D67F00C19CBA /* AppStoreConnect_Bridge.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -70,9 +70,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		15B0787C2F91D67F00C19CBA /* Astro-Bridge */ = {
+		15B0787C2F91D67F00C19CBA /* AppStoreConnectMCP */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 15B078842F91D67F00C19CBA /* Build configuration list for PBXNativeTarget "Astro-Bridge" */;
+			buildConfigurationList = 15B078842F91D67F00C19CBA /* Build configuration list for PBXNativeTarget "AppStoreConnectMCP" */;
 			buildPhases = (
 				15B078792F91D67F00C19CBA /* Sources */,
 				15B0787A2F91D67F00C19CBA /* Frameworks */,
@@ -83,11 +83,11 @@
 			buildRules = (
 			);
 			fileSystemSynchronizedGroups = (
-				15B0787F2F91D67F00C19CBA /* Astro-Bridge */,
+				15B0787F2F91D67F00C19CBA /* AppStoreConnectMCP */,
 			);
-			name = "Astro-Bridge";
-			productName = "Astro-Bridge";
-			productReference = 15B0787D2F91D67F00C19CBA /* Astro_Bridge.app */;
+			name = AppStoreConnectMCP;
+			productName = AppStoreConnectMCP;
+			productReference = 15B0787D2F91D67F00C19CBA /* AppStoreConnect_Bridge.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -105,7 +105,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 15B078782F91D67F00C19CBA /* Build configuration list for PBXProject "Astro-Bridge" */;
+			buildConfigurationList = 15B078782F91D67F00C19CBA /* Build configuration list for PBXProject "AppStoreConnectMCP" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -119,10 +119,18 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				15B0787C2F91D67F00C19CBA /* Astro-Bridge */,
+				15B0787C2F91D67F00C19CBA /* AppStoreConnectMCP */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		15B0789B2F91D80000C19CBA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		15B0789A2F91D80000C19CBA /* Package MCPB */ = {
@@ -134,7 +142,7 @@
 			);
 			name = "Package MCPB";
 			outputPaths = (
-				"$(SRCROOT)/Astro-Bridge.mcpb",
+				"$(SRCROOT)/AppStoreConnect-Bridge.mcpb",
 			);
 			shellPath = /bin/zsh;
 			shellScript = (
@@ -154,21 +162,11 @@
 				"",
 				"# Pack MCPB",
 				"export PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\"",
-				"npx --yes @anthropic-ai/mcpb pack \"${SRCROOT}/bundle/\" \"${SRCROOT}/Astro-Bridge.mcpb\"",
+				"npx --yes @anthropic-ai/mcpb pack \"${SRCROOT}/bundle/\" \"${SRCROOT}/AppStoreConnect-Bridge.mcpb\"",
 				"",
 			);
 		};
 /* End PBXShellScriptBuildPhase section */
-
-/* Begin PBXResourcesBuildPhase section */
-		15B0789B2F91D80000C19CBA /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		15B078792F91D67F00C19CBA /* Sources */ = {
@@ -179,7 +177,7 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		15B078822F91D67F00C19CBA /* Debug configuration for PBXProject "Astro-Bridge" */ = {
+		15B078822F91D67F00C19CBA /* Debug configuration for PBXProject "AppStoreConnectMCP" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -243,7 +241,7 @@
 			};
 			name = Debug;
 		};
-		15B078832F91D67F00C19CBA /* Release configuration for PBXProject "Astro-Bridge" */ = {
+		15B078832F91D67F00C19CBA /* Release configuration for PBXProject "AppStoreConnectMCP" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -300,10 +298,10 @@
 			};
 			name = Release;
 		};
-		15B078852F91D67F00C19CBA /* Debug configuration for PBXNativeTarget "Astro-Bridge" */ = {
+		15B078852F91D67F00C19CBA /* Debug configuration for PBXNativeTarget "AppStoreConnectMCP" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "Astro-Bridge/AstroBridge.entitlements";
+				CODE_SIGN_ENTITLEMENTS = AppStoreConnectMCP/AppStoreConnectMCP.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -311,18 +309,18 @@
 				DEVELOPMENT_TEAM = 2PYWYF3C55;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = "Astro-Bridge/Info.plist";
+				INFOPLIST_FILE = AppStoreConnectMCP/Info.plist;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.elarity.astro-bridge";
-				PRODUCT_NAME = Astro_Bridge;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.apocryphx.appstoreconnect-bridge";
+				PRODUCT_NAME = AppStoreConnect_Bridge;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
-		15B078862F91D67F00C19CBA /* Release configuration for PBXNativeTarget "Astro-Bridge" */ = {
+		15B078862F91D67F00C19CBA /* Release configuration for PBXNativeTarget "AppStoreConnectMCP" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "Astro-Bridge/AstroBridge.entitlements";
+				CODE_SIGN_ENTITLEMENTS = AppStoreConnectMCP/AppStoreConnectMCP.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -330,10 +328,10 @@
 				DEVELOPMENT_TEAM = 2PYWYF3C55;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = "Astro-Bridge/Info.plist";
+				INFOPLIST_FILE = AppStoreConnectMCP/Info.plist;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.elarity.astro-bridge";
-				PRODUCT_NAME = Astro_Bridge;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.apocryphx.appstoreconnect-bridge";
+				PRODUCT_NAME = AppStoreConnect_Bridge;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
@@ -341,19 +339,19 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		15B078782F91D67F00C19CBA /* Build configuration list for PBXProject "Astro-Bridge" */ = {
+		15B078782F91D67F00C19CBA /* Build configuration list for PBXProject "AppStoreConnectMCP" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				15B078822F91D67F00C19CBA /* Debug configuration for PBXProject "Astro-Bridge" */,
-				15B078832F91D67F00C19CBA /* Release configuration for PBXProject "Astro-Bridge" */,
+				15B078822F91D67F00C19CBA /* Debug configuration for PBXProject "AppStoreConnectMCP" */,
+				15B078832F91D67F00C19CBA /* Release configuration for PBXProject "AppStoreConnectMCP" */,
 			);
 			defaultConfigurationName = Release;
 		};
-		15B078842F91D67F00C19CBA /* Build configuration list for PBXNativeTarget "Astro-Bridge" */ = {
+		15B078842F91D67F00C19CBA /* Build configuration list for PBXNativeTarget "AppStoreConnectMCP" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				15B078852F91D67F00C19CBA /* Debug configuration for PBXNativeTarget "Astro-Bridge" */,
-				15B078862F91D67F00C19CBA /* Release configuration for PBXNativeTarget "Astro-Bridge" */,
+				15B078852F91D67F00C19CBA /* Debug configuration for PBXNativeTarget "AppStoreConnectMCP" */,
+				15B078862F91D67F00C19CBA /* Release configuration for PBXNativeTarget "AppStoreConnectMCP" */,
 			);
 			defaultConfigurationName = Release;
 		};

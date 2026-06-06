@@ -1,6 +1,6 @@
 //
 //  MCPServer.h
-//  Astro-Bridge
+//  AppStoreConnectMCP
 //
 //  STDIO MCP server. Three-queue architecture, matching ES Kairos:
 //    - esmb.mcp.read  (serial)     : stdin readabilityHandler → drainLines

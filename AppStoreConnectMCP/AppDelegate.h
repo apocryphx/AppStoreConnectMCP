@@ -1,6 +1,6 @@
 //
 //  AppDelegate.h
-//  Astro-Bridge
+//  AppStoreConnectMCP
 //
 
 #import <Cocoa/Cocoa.h>

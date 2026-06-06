@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# package-mcpb.sh — clean Release build → Astro-Bridge.mcpb
+# package-mcpb.sh — clean Release build → AppStoreConnect-Bridge.mcpb
 #
 # Uses an isolated DerivedData path (outside iCloud, outside Xcode's normal
 # location) so the resulting bundle is free of test-injection and other dev
@@ -11,16 +11,16 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 ROOT="$(pwd)"
 
-DERIVED="/tmp/astro-bridge-release-derived"
+DERIVED="/tmp/asc-bridge-release-derived"
 echo "[package] clean Release build into $DERIVED"
 rm -rf "$DERIVED"
-xcodebuild -project "Astro-Bridge.xcodeproj" \
-           -scheme "Astro-Bridge" \
+xcodebuild -project "AppStoreConnectMCP.xcodeproj" \
+           -scheme "AppStoreConnectMCP" \
            -configuration Release \
            -derivedDataPath "$DERIVED" \
            clean build >/dev/null
 
-APP="$DERIVED/Build/Products/Release/Astro_Bridge.app"
+APP="$DERIVED/Build/Products/Release/AppStoreConnect_Bridge.app"
 if [[ ! -d "$APP" ]]; then
     echo "[package] .app not produced at $APP" >&2
     exit 1
@@ -32,15 +32,17 @@ codesign -v --strict "$APP"
 echo "[package] bundle/server/"
 rm -rf "$ROOT/bundle/server"
 mkdir -p "$ROOT/bundle/server"
-ditto "$APP" "$ROOT/bundle/server/Astro_Bridge.app"
+ditto "$APP" "$ROOT/bundle/server/AppStoreConnect_Bridge.app"
 xattr -cr "$ROOT/bundle/server" 2>/dev/null || true
-codesign --force --deep --sign - -o runtime "$ROOT/bundle/server/Astro_Bridge.app"
+codesign --force --deep --sign - -o runtime "$ROOT/bundle/server/AppStoreConnect_Bridge.app"
 
-cp "$ROOT/icon.png" "$ROOT/bundle/icon.png"
+if [[ -f "$ROOT/icon.png" ]]; then
+    cp "$ROOT/icon.png" "$ROOT/bundle/icon.png"
+fi
 
 echo "[package] pack mcpb"
 export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
-npx --yes @anthropic-ai/mcpb pack "$ROOT/bundle/" "$ROOT/Astro-Bridge.mcpb"
+npx --yes @anthropic-ai/mcpb pack "$ROOT/bundle/" "$ROOT/AppStoreConnect-Bridge.mcpb"
 
-echo "[package] wrote $ROOT/Astro-Bridge.mcpb"
-ls -la "$ROOT/Astro-Bridge.mcpb"
+echo "[package] wrote $ROOT/AppStoreConnect-Bridge.mcpb"
+ls -la "$ROOT/AppStoreConnect-Bridge.mcpb"

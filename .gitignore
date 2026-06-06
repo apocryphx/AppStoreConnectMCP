@@ -14,3 +14,9 @@ bundle/server/
 
 # Bundle icon (copied from project-root icon.png by the Package MCPB build phase)
 bundle/icon.png
+
+# Packed bridge (built by package-mcpb.sh or Xcode build phase)
+AppStoreConnect-Bridge.mcpb
+
+# Build artifacts / profiling
+default.profraw
