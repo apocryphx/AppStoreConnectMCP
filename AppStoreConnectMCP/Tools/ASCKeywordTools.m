@@ -69,6 +69,13 @@ static NSString *appLabel(NSDictionary *app) {
     return [NSString stringWithFormat:@"%@ (%@%@)", name, stars(app), count];
 }
 
+// Pad or truncate an NSString to exactly `width` characters (Unicode-safe).
+static NSString *col(NSString *s, NSUInteger width) {
+    if (!s) s = @"";
+    if (s.length > width) s = [s substringToIndex:width];
+    return [s stringByPaddingToLength:width withString:@" " startingAtIndex:0];
+}
+
 // ─── Tools ───────────────────────────────────────────────────────────────────
 
 @implementation ASCKeywordTools
@@ -92,12 +99,11 @@ static NSString *appLabel(NSDictionary *app) {
                          [NSPredicate predicateWithBlock:^BOOL(NSString *s, id _) {
                              return s.length > 0;
                          }]];
-    keywords = [keywords valueForKeyPath:@"@unionOfObjects.self"]; // keep order
 
     NSMutableString *out = [NSMutableString string];
     [out appendFormat:@"Keyword rankings for %@ (%@, top %ld)\n\n",
      bundleId, country.uppercaseString, (long)limit];
-    [out appendFormat:@"%-35s  %s\n", "Keyword", "Rank"];
+    [out appendFormat:@"%@  %@\n", col(@"Keyword", 35), @"Rank"];
     [out appendString:@"────────────────────────────────────────────\n"];
 
     NSInteger found = 0, notFound = 0;
@@ -116,17 +122,14 @@ static NSString *appLabel(NSDictionary *app) {
             }
         }
 
-        if (rank != NSNotFound) {
-            [out appendFormat:@"%-35s  #%ld\n",
-             [kw UTF8String], (long)rank];
-            found++;
-        } else {
-            [out appendFormat:@"%-35s  not in top %ld\n",
-             [kw UTF8String], (long)MIN((NSInteger)results.count, limit)];
-            notFound++;
-        }
+        NSString *rankStr = (rank != NSNotFound)
+            ? [NSString stringWithFormat:@"#%ld", (long)rank]
+            : [NSString stringWithFormat:@"not in top %ld", (long)MIN((NSInteger)results.count, limit)];
 
-        if (keywords.lastObject != rawKw) throttle();
+        [out appendFormat:@"%@  %@\n", col(kw, 35), rankStr];
+        if (rank != NSNotFound) found++; else notFound++;
+
+        if (rawKw != keywords.lastObject) throttle();
     }
 
     [out appendFormat:@"\n%ld keyword(s) ranking, %ld not in top %ld.",
@@ -200,10 +203,12 @@ static NSString *appLabel(NSDictionary *app) {
 
     if (bundleId.length) {
         [out appendFormat:@"Tracking: %@\n\n", bundleId];
-        [out appendString:@"Keyword                              Rank    #1 App                              #2 App\n"];
+        [out appendFormat:@"%@ %@ %@ %@\n",
+         col(@"Keyword", 36), col(@"Rank", 7), col(@"#1 App", 35), @"#2 App"];
         [out appendString:@"──────────────────────────────────────────────────────────────────────────────────────────────\n"];
     } else {
-        [out appendString:@"Keyword                              #1 App                              #2 App                              #3 App\n"];
+        [out appendFormat:@"%@ %@ %@ %@\n",
+         col(@"Keyword", 36), col(@"#1 App", 35), col(@"#2 App", 35), @"#3 App"];
         [out appendString:@"──────────────────────────────────────────────────────────────────────────────────────────────────────────────\n"];
     }
 
@@ -225,8 +230,8 @@ static NSString *appLabel(NSDictionary *app) {
                 }
             }
             rankStr = (rank != NSNotFound)
-                ? [NSString stringWithFormat:@"#%-5ld", (long)rank]
-                : [NSString stringWithFormat:@"—(%ld)", (long)results.count];
+                ? [NSString stringWithFormat:@"#%ld", (long)rank]
+                : [NSString stringWithFormat:@"-%ld", (long)results.count];
         }
 
         // Top competitors (skip own app if tracking)
@@ -236,20 +241,14 @@ static NSString *appLabel(NSDictionary *app) {
             [competitors addObject:appLabel(app)];
             if (competitors.count >= (bundleId.length ? 2 : 3)) break;
         }
-        while (competitors.count < (bundleId.length ? 2 : 3)) [competitors addObject:@"—"];
+        while (competitors.count < (bundleId.length ? 2 : 3)) [competitors addObject:@"-"];
 
         if (bundleId.length) {
-            [out appendFormat:@"%-36s %-7s %-35s %@\n",
-             [kw UTF8String],
-             [rankStr UTF8String],
-             [[competitors[0] substringToIndex:MIN(35u, (unsigned)[competitors[0] length])] UTF8String],
-             [competitors[1] substringToIndex:MIN(35u, (unsigned)[competitors[1] length])]];
+            [out appendFormat:@"%@ %@ %@ %@\n",
+             col(kw, 36), col(rankStr, 7), col(competitors[0], 35), col(competitors[1], 35)];
         } else {
-            [out appendFormat:@"%-36s %-35s %-35s %@\n",
-             [kw UTF8String],
-             [[competitors[0] substringToIndex:MIN(35u, (unsigned)[competitors[0] length])] UTF8String],
-             [[competitors[1] substringToIndex:MIN(35u, (unsigned)[competitors[1] length])] UTF8String],
-             [competitors[2] substringToIndex:MIN(35u, (unsigned)[competitors[2] length])]];
+            [out appendFormat:@"%@ %@ %@ %@\n",
+             col(kw, 36), col(competitors[0], 35), col(competitors[1], 35), col(competitors[2], 35)];
         }
 
         if (rawKw != keywords.lastObject) throttle();
