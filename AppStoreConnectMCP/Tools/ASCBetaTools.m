@@ -6,6 +6,11 @@
 #import "ASCBetaTools.h"
 #import "ASCClient.h"
 
+/// JSON null arrives as NSNull, which throws on boolValue — coerce safely.
+static BOOL jsonBool(id v) {
+    return [v isKindOfClass:[NSNumber class]] && [v boolValue];
+}
+
 @implementation ASCBetaTools
 
 + (nullable NSString *)listBetaGroups:(NSDictionary *)args error:(NSError **)error {
@@ -24,8 +29,8 @@
         NSDictionary *attrs = g[@"attributes"] ?: @{};
         [out appendFormat:@"• %@ (ID: %@)\n  Public: %@ | Internal: %@\n\n",
          attrs[@"name"] ?: @"?", g[@"id"] ?: @"?",
-         [attrs[@"publicLinkEnabled"] boolValue] ? @"Yes" : @"No",
-         [attrs[@"isInternalGroup"] boolValue]   ? @"Yes" : @"No"];
+         jsonBool(attrs[@"publicLinkEnabled"]) ? @"Yes" : @"No",
+         jsonBool(attrs[@"isInternalGroup"])   ? @"Yes" : @"No"];
     }
     return out;
 }

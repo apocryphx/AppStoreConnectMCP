@@ -48,10 +48,15 @@ static void throttle(void) {
     [NSThread sleepForTimeInterval:0.25];
 }
 
+/// JSON null arrives as NSNull, which throws on scalar accessors — coerce safely.
+static NSInteger jsonInteger(id v) {
+    return [v isKindOfClass:[NSNumber class]] ? [v integerValue] : 0;
+}
+
 /// Format a star rating as "★4.7" or "★—" if missing.
 static NSString *stars(NSDictionary *app) {
     NSNumber *r = app[@"averageUserRating"];
-    if (!r) return @"★—";
+    if (![r isKindOfClass:[NSNumber class]]) return @"★—";
     return [NSString stringWithFormat:@"★%.1f", r.doubleValue];
 }
 
@@ -84,7 +89,7 @@ static NSString *col(NSString *s, NSUInteger width) {
     NSString *keywordsRaw = args[@"keywords"];
     NSString *bundleId    = args[@"bundle_id"];
     NSString *country     = args[@"country"] ?: @"us";
-    NSInteger limit       = [args[@"limit"] integerValue] ?: 100;
+    NSInteger limit       = jsonInteger(args[@"limit"]) ?: 100;
     if (limit < 1 || limit > 200) limit = 100;
 
     if (!keywordsRaw.length || !bundleId.length) {
@@ -141,7 +146,7 @@ static NSString *col(NSString *s, NSUInteger width) {
     NSString *keyword = [args[@"keyword"]
                          stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     NSString *country = args[@"country"] ?: @"us";
-    NSInteger limit   = [args[@"limit"] integerValue] ?: 10;
+    NSInteger limit   = jsonInteger(args[@"limit"]) ?: 10;
     if (limit < 1 || limit > 50) limit = 10;
 
     if (!keyword.length) {
@@ -164,7 +169,7 @@ static NSString *col(NSString *s, NSUInteger width) {
         NSString *bundleId  = app[@"bundleId"]     ?: @"?";
         NSString *genre     = app[@"primaryGenreName"] ?: @"?";
         NSNumber *price     = app[@"price"];
-        NSString *priceStr  = (price && price.doubleValue > 0)
+        NSString *priceStr  = ([price isKindOfClass:[NSNumber class]] && price.doubleValue > 0)
                               ? [NSString stringWithFormat:@"$%.2f", price.doubleValue]
                               : @"Free";
 
@@ -181,7 +186,7 @@ static NSString *col(NSString *s, NSUInteger width) {
     NSString *keywordsRaw = args[@"keywords"];
     NSString *bundleId    = args[@"bundle_id"];  // optional
     NSString *country     = args[@"country"] ?: @"us";
-    NSInteger limit       = [args[@"limit"] integerValue] ?: 100;
+    NSInteger limit       = jsonInteger(args[@"limit"]) ?: 100;
     if (limit < 1 || limit > 200) limit = 100;
 
     if (!keywordsRaw.length) {

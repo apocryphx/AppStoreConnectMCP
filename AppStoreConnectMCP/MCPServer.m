@@ -143,12 +143,22 @@
         NSString *toolName = params[@"name"];
         NSDictionary *arguments = params[@"arguments"] ?: @{};
         NSError *error = nil;
+        NSString *text = nil;
         // callTool:arguments:error: blocks synchronously on the work queue.
         // That's intentional: one request completes before the next starts,
         // which keeps responses matched to their request IDs.
-        NSString *text = [[ASCToolRegistry shared] callTool:toolName
-                                                  arguments:arguments
-                                                      error:&error];
+        // An ObjC exception here must fail this one call, not kill the server.
+        @try {
+            text = [[ASCToolRegistry shared] callTool:toolName
+                                            arguments:arguments
+                                                error:&error];
+        } @catch (NSException *ex) {
+            text = nil;
+            error = [NSError errorWithDomain:@"MCPServer" code:-1
+                                    userInfo:@{NSLocalizedDescriptionKey:
+                [NSString stringWithFormat:@"Internal error in tool '%@': %@",
+                 toolName ?: @"?", ex.reason ?: ex.name]}];
+        }
         output = ESMBJSONRPCResult(rpcId, @{
             @"content": @[@{
                 @"type": @"text",
